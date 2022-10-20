@@ -7,6 +7,7 @@ function create_topology_data_from_matpower_data(matdata)
     basemva = matdata.basemva
     slackbus = findall(x -> x==3, matdata.bus[:,2])[1]
     nbus = size(matdata.bus, 1)
+    ngen = size(matdata.gen, 1)
     businds = collect(1:nbus)
     origbusinds =  Int64.(matdata.bus[:,1])
     busindmap = Dict(zip(origbusinds, businds))
@@ -17,18 +18,29 @@ function create_topology_data_from_matpower_data(matdata)
     costfunction_type = Int64(matdata.gencost[1,1]) # assuming all generators have the same cost function model
     areas = get_ordered_areas(matdata.bus[:,7])
     if costfunction_type == 2
-        # quadratic
-        lincost = matdata.gencost[:,5]
-        quadcost = matdata.gencost[:,5]
+        println("It's a polynomial cost model")
+        # polynomial
+        if matdata.gencost[1,4] == 2
+            quadcost = zeros(ngen)
+            lincost = matdata.gencost[:,5]
+            fixcost = matdata.gencost[:,6]
+        elseif matdata.gencost[1,4] > 2 
+            quadcost = matdata.gencost[:,5]
+            lincost = matdata.gencost[:,6]
+            fixcost = matdata.gencost[:,7]
+        end
         pwlccost = PWLC(0, [0. 0.], [0. 0])
+        noloadc = fixcost
     elseif costfunction_type == 1
-        # linear
+        println("It's a piecewise linear cost model")
+        # pw linear
         lincost = []
         quadcost = []
         npoints = Int64(matdata.gencost[1,4])
         xpoints = matdata.gencost[:,[Int64(3+(2*i)) for i in 1:npoints]]
         ypoints = matdata.gencost[:,[Int64(4+(2*i)) for i in 1:npoints]]
         pwlccost = PWLC(npoints, xpoints, ypoints)
+        noloadc = matdata.gencost[:,7]
     else
         lincost = []
         quadcost = []
@@ -36,7 +48,7 @@ function create_topology_data_from_matpower_data(matdata)
     end
     psdata = PSTopology( 
         genbuses, [], areas.list,  matdata.gen[:,9] ./ basemva, matdata.gen[:,10]./basemva, costfunction_type,
-        lincost, quadcost, pwlccost, matdata.gencost[:,7], matdata.gencost[:,2], matdata.gencost[:,3], matdata.gen[:,8],
+        lincost, quadcost, pwlccost, noloadc, matdata.gencost[:,2], matdata.gencost[:,3], matdata.gen[:,8],
         branches, matdata.branch[:,4], 1 ./ matdata.branch[:,4], matdata.branch[:,6] / basemva, slackbus,
             size(matdata.bus, 1), areas.N, size(matdata.gen, 1), 0, size(matdata.branch, 1), basemva
     )
