@@ -2,6 +2,7 @@ module PSDataIO
 
 using CSV, DataFrames
 using SparseArrays
+using LinearAlgebra
 
 mutable struct PWLC
     #=
