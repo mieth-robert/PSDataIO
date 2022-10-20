@@ -1,8 +1,7 @@
 module PSDataIO
 
-import CSV, DataFrames
-import SparseArrays
-
+using CSV, DataFrames
+using SparseArrays
 
 mutable struct PWLC
     #=
@@ -73,6 +72,5 @@ end
 
 include("data_io.jl")
 include("ps_data_handler.jl")
-
 
 end # module
