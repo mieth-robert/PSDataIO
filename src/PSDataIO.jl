@@ -41,6 +41,9 @@ mutable struct PSTopology
     gen_loc::Vector{Int64} # bus ids of generators 
     wind_loc::Vector{Int64} # bus ids of wind farms 
     bus_areas::Vector{Int64} # area index for each bus
+    bus_type::Vector{Int64} # type of bus 1: PQ, 2: PV, 3: Slack
+    bus_Gs::Vector{Int64} # shunt conductance
+    bus_Bs::Vector{Int64} # shunt susceptance
     gen_pmax::Vector{Float64} # generator production limit
     gen_pmin::Vector{Float64} # generator minimum production
     gen_qmax::Vector{Float64} # generator reactive power max
