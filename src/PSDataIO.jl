@@ -43,6 +43,8 @@ mutable struct PSTopology
     bus_areas::Vector{Int64} # area index for each bus
     gen_pmax::Vector{Float64} # generator production limit
     gen_pmin::Vector{Float64} # generator minimum production
+    gen_qmax::Vector{Float64} # generator reactive power max
+    gen_qmin::Vector{Float64} # generator reactive power min
     gen_cost_type::Int64 # 1 = piecewise linear, 2 = quadratic
     gen_cost_lin::Vector{Float64} # generator cost linear term
     gen_cost_quad::Vector{Float64} # generator cost quadratic term
