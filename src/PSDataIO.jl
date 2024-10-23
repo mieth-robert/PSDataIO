@@ -44,7 +44,7 @@ mutable struct PSTopology
     bus_type::Vector{Int64} # type of bus 1: PQ, 2: PV, 3: Slack
     bus_Gs::Vector{Float64} # shunt conductance
     bus_Bs::Vector{Float64} # shunt susceptance
-    gen_pmax::Vector{Float64} # generator production limit
+    gen_pmax::Vector{Float64} # ge_nerator production limit
     gen_pmin::Vector{Float64} # generator minimum production
     gen_qmax::Vector{Float64} # generator reactive power max
     gen_qmin::Vector{Float64} # generator reactive power min
@@ -57,8 +57,10 @@ mutable struct PSTopology
     gen_cost_shutdown::Vector{Float64} # generator shutdown cost
     gen_status::Vector{Float64} # generator status
     branches::Matrix{Int64} # 2 col matrix with from/to bus id
+    branch_r::Vector{Float64} # r in pu
     branch_x::Vector{Float64} # x in pu
     branch_b::Vector{Float64} # b in pu
+    branch_ratio::Vector{Float64} # transformer ratio Vf/Vt
     branch_smax::Vector{Float64} # thermal limit of line
     slack::Int64 # id of slack bus
     Nbus::Int64 # number of buses
