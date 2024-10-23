@@ -44,6 +44,8 @@ mutable struct PSTopology
     bus_type::Vector{Int64} # type of bus 1: PQ, 2: PV, 3: Slack
     bus_Gs::Vector{Float64} # shunt conductance
     bus_Bs::Vector{Float64} # shunt susceptance
+    bus_vmax::Vector{Float64} # maximum voltage p.u.
+    bus_vmin::Vector{Float64} # minimum voltage p.u.
     gen_pmax::Vector{Float64} # ge_nerator production limit
     gen_pmin::Vector{Float64} # generator minimum production
     gen_qmax::Vector{Float64} # generator reactive power max

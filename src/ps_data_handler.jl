@@ -47,7 +47,7 @@ function create_topology_data_from_matpower_data(matdata)
         pwlccost = PWLC(0, [0. 0.], [0. 0])
     end
     psdata = PSTopology( 
-        origbusinds, genbuses, [], areas.list, Int.(matdata.bus[:,2]), matdata.bus[:,5], matdata.bus[:,6],
+        origbusinds, genbuses, [], areas.list, Int.(matdata.bus[:,2]), matdata.bus[:,5], matdata.bus[:,6], matdata.bus[:,12], matdata.bus[:,13], 
         matdata.gen[:,9]./basemva, matdata.gen[:,10]./basemva, matdata.gen[:,4] ./ basemva, matdata.gen[:,5]./basemva, costfunction_type,
         lincost, quadcost, pwlccost, noloadc, matdata.gencost[:,2], matdata.gencost[:,3], matdata.gen[:,8],
         branches, matdata.branch[:,3], matdata.branch[:,4], matdata.branch[:,5], matdata.branch[:,9], matdata.branch[:,6] / basemva, slackbus,
