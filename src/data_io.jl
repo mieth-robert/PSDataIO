@@ -1,31 +1,20 @@
 export read_matpower_m_file, load_rts_timeseries
 
 function read_matpower_m_file(mfile)
-
     text = read(mfile, String)
+    parse_mat(s) = reduce(vcat, (permutedims(parse.(Float64, split(strip(r), r"\s+")))
+                                 for r in split(s, ';') if !isempty(strip(r))))
 
-    mva = collect.(findall("mpc.baseMVA", text))[1][end]+1
-    b = collect.(findall(r"mpc.bus( |=)", text))[1][end]+1
-    l = collect.(findall("mpc.branch", text))[1][end]+1
-    g = collect.(findall(r"mpc.gen( |=)", text))[1][end]+1
-    gc = collect.(findall("mpc.gencost", text))[1][end]+1
-    bs = collect.(findall("]", text)) .|> (x) -> x[1]
-    rs = collect.(findall("\n", text)) .|> (x) -> x[1]-1
-    
-    mva_data = text[mva:rs[findfirst(rs .> mva)]]  
-    bus_data = text[b:bs[findfirst(bs .> b)]]
-    line_data = text[l:bs[findfirst(bs .> l)]]
-    gen_data = text[g:bs[findfirst(bs .> g)]]
-    gencost_data = text[gc:bs[findfirst(bs .> gc)]]  
-    
-    eval(Meta.parse("basemva $(mva_data)")) # the equal sign is included in the second term
-    eval(Meta.parse("bus $bus_data"))
-    eval(Meta.parse("branch $line_data"))
-    eval(Meta.parse("gen $gen_data"))
-    eval(Meta.parse("gencost $gencost_data"))
+    fields = Dict{String,String}()
+    for m in eachmatch(r"mpc\.(\w+)\s*=\s*(?:\[(.*?)\]|([^;\n]+))"s, text)
+        fields[m.captures[1]] = something(m.captures[2], m.captures[3])
+    end
 
-    return (basemva=basemva, bus=bus, branch=branch, gen=gen, gencost=gencost)
-
+    return (basemva = parse(Float64, fields["baseMVA"]),
+            bus     = parse_mat(fields["bus"]),
+            branch  = parse_mat(fields["branch"]),
+            gen     = parse_mat(fields["gen"]),
+            gencost = parse_mat(fields["gencost"]))
 end
 
 function load_rts_timeseries(rts_time_series_file::String)
